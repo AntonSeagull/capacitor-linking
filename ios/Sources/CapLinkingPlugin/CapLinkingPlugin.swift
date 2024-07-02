@@ -25,7 +25,7 @@ public class CapLinkingPlugin: CAPPlugin {
         }
     }
 
-  @objc func canOpenURL(_ call: CAPPluginCall) {
+   @objc func canOpenURL(_ call: CAPPluginCall) {
         guard let urlString = call.getString("url"), let url = URL(string: urlString) else {
             call.reject("Invalid URL")
             return
@@ -38,24 +38,20 @@ public class CapLinkingPlugin: CAPPlugin {
         }
 
         // Check if the URL can be opened
-        DispatchQueue.main.async {
-            let canOpen = UIApplication.shared.canOpenURL(url)
-            let scheme = url.scheme?.lowercased() ?? ""
+        let canOpen = UIApplication.shared.canOpenURL(url)
+        let scheme = url.scheme?.lowercased() ?? ""
 
-            if canOpen {
-                UIApplication.shared.open(url, options: [:], completionHandler: { success in
-                    call.resolve(["canOpen": success])
-                })
-            } else if !scheme.hasPrefix("http") && !scheme.hasPrefix("https") {
-                // Check if the custom scheme is in LSApplicationQueriesSchemes
-                if let querySchemes = Bundle.main.object(forInfoDictionaryKey: "LSApplicationQueriesSchemes") as? [String], querySchemes.contains(where: { $0.caseInsensitiveCompare(scheme) == .orderedSame }) {
-                    call.resolve(["canOpen": false])
-                } else {
-                    call.reject("Unable to open URL: \(urlString). Add \(scheme) to LSApplicationQueriesSchemes in your Info.plist.")
-                }
-            } else {
+        if canOpen {
+            call.resolve(["canOpen": true])
+        } else if !scheme.hasPrefix("http") && !scheme.hasPrefix("https") {
+            // Check if the custom scheme is in LSApplicationQueriesSchemes
+            if let querySchemes = Bundle.main.object(forInfoDictionaryKey: "LSApplicationQueriesSchemes") as? [String], querySchemes.contains(where: { $0.caseInsensitiveCompare(scheme) == .orderedSame }) {
                 call.resolve(["canOpen": false])
+            } else {
+                call.reject("Unable to open URL: \(urlString). Add \(scheme) to LSApplicationQueriesSchemes in your Info.plist.")
             }
+        } else {
+            call.resolve(["canOpen": false])
         }
     }
 }
