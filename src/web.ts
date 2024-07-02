@@ -10,11 +10,7 @@ export class CapLinkingWeb extends WebPlugin implements CapLinkingPlugin {
 
   async canOpenURL(options: { url: string }): Promise<{ canOpen: boolean }> {
     const { url } = options;
-    try {
-      const response = await fetch(url, { method: 'HEAD' });
-      return { canOpen: response.ok };
-    } catch {
-      return { canOpen: false };
-    }
+    console.info('No implementation for web, returning true', url);
+    return { canOpen: true };
   }
 }
