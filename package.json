@@ -1,6 +1,6 @@
 {
   "name": "capacitor-linking",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "The Capacitor Linking Plugin provides functionality similar to React Native’s Linking module",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
